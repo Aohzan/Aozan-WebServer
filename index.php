@@ -16,9 +16,24 @@ if(isset($_GET['type'])) {
 	$type = $_GET['type'];
 
 	// Connexion à la db
+	$link = mysql_connect('mysqlserver','login','pass') or die('Cannot connect to the DB');
 	mysql_select_db('aozan',$link) or die('Cannot select the DB');
-
-	if($type == "GetListes") {
+	
+	// Authentification
+	if($type == "Authentification") {
+		$typeQuery = 1;
+		if(isset($_GET['user']) || isset($_GET['value'])) {
+			$login = $_GET['user'];
+			$password = $_GET['value'];
+			// Création de la requete
+			$query = "SELECT id, nom, login FROM utilisateur WHERE login = '".$login."' AND password = '".$password."'";
+			// Execution de la requete	
+			$results = mysql_query($query,$link) or die('Erreur BDD : ' . mysql_error());			
+		} else {
+			exit('Manque : user ou value (password)');
+		}
+	// Autres types de demandes
+	} elseif($type == "GetListes") {
 		if(isset($_GET['user'])) {
 			$typeQuery = 1;
 			// Récupération de l'utilisateur
